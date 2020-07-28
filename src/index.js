@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import SeasonDisplay from "./SeasonDisplay";
+import LoadingSpinner from "./LoadingSpinner"
+import ErrorDisplay from "./ErrorDisplay";
 
 // function component
 // const App = () => {
@@ -31,7 +33,7 @@ class App extends React.Component {
     lat: null,
     errorMessage: null,
     loading:
-      "Loading, please wait! Don't be so impatient, we need to callback first.",
+      "Loading, please wait!",
   };
 
   //loads when the component is created and rendered
@@ -55,16 +57,26 @@ class App extends React.Component {
   // componentWillUnmount() {
   // }
 
-  //react says we have to use the render method or it will be angry
-  //dont do coding in the render, no js or api calls, just want to return jsx
-  render() {
+  //rather than put the conditional returns inside the render method, its better to have them in a helperfunction like this, in case we need to make changes to the overall body (like adding a border no matter which component is showing). Anytime we make a component, we try to not have multiple return statements inside a render method, we often want to wrap any component that is shown with a common element (div = container)
+
+  renderContent() {
     if (this.state.errorMessage && !this.state.lat) {
-      return <div>Error: {this.state.errorMessage}</div>;
+      return <ErrorDisplay errorMessage={this.state.errorMessage} />;
     } else if (!this.state.errorMessage && this.state.lat) {
       return <SeasonDisplay lat={this.state.lat} />
     } else {
-      return <div>{this.state.loading}</div>;
+      return <LoadingSpinner message="Please accept location request" />;
     }
+  }
+
+  //react says we have to use the render method or it will be angry
+  //dont do coding in the render, no js or api calls, just want to return jsx
+  render() {
+    return (
+      <div className="container">
+        {this.renderContent()}
+      </div>
+    )
   }
 }
 
